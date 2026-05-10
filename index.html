@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Dealer CFO Copilot — From a Weekend Demo to a Multi-Tenant Dealer RAG</title>
+<meta name="description" content="Started as a weekend RAG demo for one PDF. Now a Next.js + FastAPI + Elasticsearch product over a multi-OEM dealer knowledge base. Cite the source verbatim, or refuse." />
+<meta name="theme-color" content="#ECE5D3" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;0,6..96,800;0,6..96,900;1,6..96,400;1,6..96,700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=JetBrains+Mono:wght@300;400;500;700&display=swap"
+  rel="stylesheet"
+/>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/>
+    </filter>
+    <pattern id="grainPattern" x="0" y="0" width="220" height="220" patternUnits="userSpaceOnUse">
+      <rect width="220" height="220" filter="url(#grain)"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="grain" aria-hidden="true">
+  <svg width="100%" height="100%"><rect width="100%" height="100%" fill="url(#grainPattern)"/></svg>
+</div>
+
+<!-- ============== MASTHEAD ============== -->
+<header class="masthead">
+  <div class="masthead__col">
+    <span class="mark">◐</span>
+    <span>The Dealer Ledger</span>
+  </div>
+  <div class="masthead__col masthead__col--center">
+    Vol. I &nbsp;·&nbsp; Issue 02 &nbsp;·&nbsp; May 9, 2026 &nbsp;·&nbsp; The Pivot Issue
+  </div>
+  <div class="masthead__col masthead__col--right">
+    <span class="status-dot"></span>
+    <span>Margin · multi-tenant</span>
+  </div>
+</header>
+
+<!-- ============== HERO ============== -->
+<section class="hero" id="top">
+
+  <div class="hero__rule"></div>
+
+  <div class="hero__grid">
+
+    <aside class="hero__meta">
+      <div class="kicker">Field Report №&nbsp;002</div>
+      <div class="meta-block">
+        <div class="meta-block__label">Filed by</div>
+        <div class="meta-block__value">A. Wu</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-block__label">Subject</div>
+        <div class="meta-block__value"><strong>Margin</strong> &mdash; the dealer CFO copilot</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-block__label">For</div>
+        <div class="meta-block__value">Robert &mdash; multi-store GM &amp; Ford dealer principal</div>
+      </div>
+      <div class="meta-block">
+        <div class="meta-block__label">Promise</div>
+        <div class="meta-block__value">Cite the source, or shut up.</div>
+      </div>
+    </aside>
+
+    <div class="hero__center">
+      <p class="eyebrow">Origin: a weekend build &middot; Now: a multi-tenant product</p>
+      <h1 class="display">
+        <span class="display__row">Which</span>
+        <span class="display__row display__row--alt">
+          <em>gross</em>,
+        </span>
+        <span class="display__row display__row--small">exactly?</span>
+      </h1>
+      <p class="dek">
+        Started life on a weekend as a single-PDF Streamlit demo. Three weeks later
+        <strong>Margin</strong> is a Next.js&nbsp;+&nbsp;FastAPI&nbsp;+&nbsp;Elasticsearch
+        product over a multi-OEM dealer knowledge base&nbsp;&mdash;&nbsp;<u>Chevrolet, Ford,
+        GMC, plus NADA, Kerrigan, IRS and STAR</u>. The promise is the same as it was on
+        Day One: <em>cite the source verbatim</em>, or refuse on the record.
+      </p>
+
+      <div class="hero__chips">
+        <span class="chip">Next.js&nbsp;14</span>
+        <span class="chip">FastAPI</span>
+        <span class="chip">Elasticsearch</span>
+        <span class="chip">claude-sonnet-4-6</span>
+        <span class="chip chip--accent">Per-user index. Cite-or-refuse. PDF-side-by-side.</span>
+      </div>
+    </div>
+
+    <aside class="hero__stats">
+      <div class="stat">
+        <div class="stat__num"><span>4</span></div>
+        <div class="stat__label">OEM folders<br/>in the corpus</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num"><span>30</span><sup>+</sup></div>
+        <div class="stat__label">PDFs indexed<br/>across OEMs</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num"><span>2</span></div>
+        <div class="stat__label">Search modes<br/>keyword &middot; natural</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num"><span>0</span></div>
+        <div class="stat__label">Hallucinations<br/>tolerated</div>
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="hero__footer">
+    <div class="folio">p.&nbsp;01</div>
+    <a href="#problem" class="hero__cue">
+      <span>Read on</span>
+      <span class="hero__cue-arrow">↓</span>
+    </a>
+    <div class="folio folio--right">Margin &middot; multi-tenant &nbsp;·&nbsp; May&nbsp;9</div>
+  </div>
+</section>
+
+<!-- ============== SECTION 1: THE PROBLEM ============== -->
+<section class="section section--problem" id="problem">
+
+  <div class="section__header">
+    <div class="section__num">I.</div>
+    <div class="section__title">The Question</div>
+    <div class="section__rule"></div>
+    <div class="section__page">p. 02</div>
+  </div>
+
+  <div class="problem">
+    <div class="problem__col problem__col--lead">
+      <p class="lede">
+        <span class="dropcap">A</span>sk a dealer principal what their gross profit was last
+        month and they will ask you, reasonably,
+        <em>which one?</em> Variable gross. Department gross. Front-end. Back-end.
+        <q>Total gross profit, line one</q>&mdash;which is itself a definition that hides three more.
+        The GM Standard Accounting Manual answers all of these. It just takes <em>twenty minutes
+        of flipping</em> to find the answer for any one of them.
+      </p>
+
+      <p>
+        Robert runs four stores across two OEMs. Each month his controller sends him a statement
+        that prints <span class="mono">Variable Selling Expense&nbsp;5.2&nbsp;%&nbsp;of&nbsp;gross</span>
+        and Robert pages through five hundred PDFs to remember which gross. He doesn't want a chatbot.
+        He wants the manual&mdash;the same manuals he already trusts&mdash;to answer in one breath
+        and show him the page side-by-side so he can verify.
+      </p>
+
+      <p>
+        That is the entire product. <strong>Margin</strong> quotes the document or says nothing.
+        It is named for both halves of what it does: the profit margin Robert watches every month,
+        and the margin of the page where the citation lives.
+      </p>
+    </div>
+
+    <aside class="pullquote">
+      <span class="pullquote__mark">&ldquo;</span>
+      <p>I don't want it to <em>guess</em>. I want it to <em>read</em>.</p>
+      <footer>&mdash; Robert, on a Tuesday</footer>
+    </aside>
+
+    <div class="problem__col problem__col--side">
+      <div class="callout">
+        <div class="callout__label">Hard rules, in order</div>
+        <ol class="rules">
+          <li><span>01</span> If the manual doesn't say it, the copilot doesn't either.</li>
+          <li><span>02</span> Every answer cites a page. No page, no answer.</li>
+          <li><span>03</span> Quote verbatim before paraphrasing.</li>
+          <li><span>04</span> Refuse loudly when confidence is low. Refusal is a feature.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============== SECTION 2: THE PIPELINE ============== -->
+<section class="section section--pipeline" id="pipeline">
+
+  <div class="section__header">
+    <div class="section__num">II.</div>
+    <div class="section__title">A Three-Layer Pipeline</div>
+    <div class="section__rule"></div>
+    <div class="section__page">p. 03</div>
+  </div>
+
+  <p class="section__lede">
+    Three stages, each with a single responsibility. Each is testable in isolation. Each refuses
+    when it isn't sure&mdash;so the whole pipeline degrades to <em>I don't know</em> before it
+    degrades to <em>I made it up</em>. The shapes have changed since the weekend; the rule has not.
+  </p>
+
+  <div class="pipeline">
+
+    <article class="stage" data-stage="1">
+      <header class="stage__header">
+        <span class="stage__num">01</span>
+        <h3 class="stage__name">Ingest &middot; <em>parse</em></h3>
+      </header>
+      <p class="stage__what">User uploads a PDF in the Next.js sidebar. Pages are parsed client-side, then forwarded to the FastAPI service which chunks them into 3-sentence windows and POSTs to the user's index.</p>
+      <dl class="stage__pairs">
+        <dt>Input</dt>  <dd class="mono">PDF + x-user-id</dd>
+        <dt>Output</dt> <dd>chunked pages, embedded</dd>
+        <dt>Boundary</dt> <dd>per-user fs + ES index</dd>
+      </dl>
+      <div class="stage__strip">
+        <div class="bar" style="--w:88%"><span>nada_data_2025_full_year.pdf</span><b>116&nbsp;p</b></div>
+        <div class="bar" style="--w:62%"><span>kerrigan_blue_sky_2025.pdf</span><b>48&nbsp;p</b></div>
+        <div class="bar" style="--w:74%"><span>gm_dealer_standard_acct.pdf</span><b>616&nbsp;p</b></div>
+      </div>
+    </article>
+
+    <div class="connector" aria-hidden="true">
+      <svg viewBox="0 0 100 24" preserveAspectRatio="none"><path d="M0 12 H92 L84 6 M92 12 L84 18" /></svg>
+    </div>
+
+    <article class="stage" data-stage="2">
+      <header class="stage__header">
+        <span class="stage__num">02</span>
+        <h3 class="stage__name">Index &middot; <em>per-user</em></h3>
+      </header>
+      <p class="stage__what">One Elasticsearch index per user&mdash;<span class="mono">rag-&lt;user&gt;</span>&mdash;with both BM25 (<em>keyword</em> mode) and a dense_vector field via <span class="mono">sentence-transformers</span> kNN (<em>natural</em> mode). Tenant isolation by construction.</p>
+      <dl class="stage__pairs">
+        <dt>Engine</dt> <dd class="mono">Elasticsearch</dd>
+        <dt>Modes</dt>  <dd>BM25 + cosine kNN</dd>
+        <dt>Isolation</dt> <dd>one index per user</dd>
+      </dl>
+      <div class="stage__strip stage__strip--chunks">
+        <div class="chunk-tag">rag-robert &middot; 4&nbsp;OEMs &middot; <b>30+&nbsp;docs</b></div>
+        <div class="chunk-tag">BM25 &middot; <em>english</em> analyzer &middot; <b>keyword</b></div>
+        <div class="chunk-tag">dense_vector &middot; cosine &middot; <b>natural</b></div>
+      </div>
+    </article>
+
+    <div class="connector" aria-hidden="true">
+      <svg viewBox="0 0 100 24" preserveAspectRatio="none"><path d="M0 12 H92 L84 6 M92 12 L84 18" /></svg>
+    </div>
+
+    <article class="stage" data-stage="3">
+      <header class="stage__header">
+        <span class="stage__num">03</span>
+        <h3 class="stage__name">Cite &middot; <em>verbatim</em></h3>
+      </header>
+      <p class="stage__what">Search returns ranked verbatim quotes with doc + page + bbox; the UI opens the PDF side-by-side and highlights the cited region. When nothing scores, a Claude-CLI agent names which document type would unlock the query.</p>
+      <dl class="stage__pairs">
+        <dt>Output</dt>  <dd>quotes &middot; doc &middot; page</dd>
+        <dt>Viewer</dt>  <dd>PDF side-by-side</dd>
+        <dt>Refuses if</dt> <dd>no quote scores</dd>
+      </dl>
+      <div class="stage__strip stage__strip--out">
+        <div class="quote-mini">&ldquo;&hellip;average pre-tax net profit of <em>$5,408,000</em>&hellip;&rdquo; <span class="cite">nada&nbsp;·&nbsp;p.&nbsp;6</span></div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="pipeline__note">
+    <span>NOTE</span>
+    Stages remain pure of one another. <span class="mono">backend_rag/app/store.py</span> is the only
+    module that touches Elasticsearch; <span class="mono">app/agent.py</span> is the only module that
+    shells out to Claude. The original LanceDB+Voyage pipeline is preserved in <span class="mono">bp/src/</span>
+    as the primitive baseline.
+  </div>
+
+</section>
+
+<!-- ============== SECTION 3: A LIVE RUN ============== -->
+<section class="section section--run" id="run">
+
+  <div class="section__header section__header--inverted">
+    <div class="section__num">III.</div>
+    <div class="section__title">A Live Run</div>
+    <div class="section__rule"></div>
+    <div class="section__page">p. 04</div>
+  </div>
+
+  <div class="run">
+
+    <div class="run__intro">
+      <p class="section__lede section__lede--inverted">
+        The headline pitch query, end to end. Press the controls below to walk through it.
+        The artifacts shown are formatted from real outputs against
+        <span class="mono">rag_knowledge_base/car_dealership_knowledge_base/00_common/</span>.
+      </p>
+
+      <div class="run__controls">
+        <button class="ctl is-active" data-step="1" type="button"><span>01</span> Ask</button>
+        <button class="ctl" data-step="2" type="button"><span>02</span> Rank</button>
+        <button class="ctl" data-step="3" type="button"><span>03</span> Open</button>
+        <button class="ctl" data-step="4" type="button"><span>04</span> Cite</button>
+        <button class="ctl ctl--alt" data-step="5" type="button"><span>05</span> Refuse</button>
+      </div>
+    </div>
+
+    <div class="terminal" id="terminal">
+
+      <div class="terminal__chrome">
+        <span class="terminal__dot"></span>
+        <span class="terminal__dot"></span>
+        <span class="terminal__dot"></span>
+        <span class="terminal__title">margin · localhost:3000  &middot;  signed in as robert</span>
+      </div>
+
+      <div class="terminal__body">
+
+        <!-- STEP 1: ask -->
+        <div class="step is-active" data-step="1">
+          <div class="step__label">USER QUERY &middot; natural mode</div>
+          <div class="paste">
+            <span class="caret">▌</span>What was the average pre-tax net profit per franchised new-car dealership in 2025?
+          </div>
+          <div class="step__hint">Robert's headline pitch query. Scope: <span class="mono">00_common/</span> &mdash; the industry benchmark folder. Mode: natural (kNN). Depth: accurate.</div>
+        </div>
+
+        <!-- STEP 2: rank -->
+        <div class="step" data-step="2">
+          <div class="step__label">RANKED QUOTES &middot; top-3</div>
+          <ol class="cands">
+            <li class="cand cand--top">
+              <div class="cand__name">nada_data_2025_full_year.pdf</div>
+              <div class="cand__meta"><span>00_common</span> · <span>p.&nbsp;6</span> · <span>FRANCHISED&nbsp;DEALERSHIP&nbsp;PROFILE</span></div>
+              <div class="cand__bar"><span style="--w:91%"></span></div>
+              <div class="cand__score">0.91</div>
+            </li>
+            <li class="cand">
+              <div class="cand__name">nada_data_2025_mid_year.pdf</div>
+              <div class="cand__meta"><span>00_common</span> · <span>p.&nbsp;5</span> · <span>MID-YEAR&nbsp;PROFILE</span></div>
+              <div class="cand__bar"><span style="--w:73%"></span></div>
+              <div class="cand__score">0.73</div>
+            </li>
+            <li class="cand">
+              <div class="cand__name">kerrigan_blue_sky_report_2025.pdf</div>
+              <div class="cand__meta"><span>00_common</span> · <span>p.&nbsp;9</span> · <span>EARNINGS&nbsp;OUTLOOK</span></div>
+              <div class="cand__bar"><span style="--w:54%"></span></div>
+              <div class="cand__score">0.54</div>
+            </li>
+          </ol>
+          <div class="step__hint">Two NADA editions surface, plus a Kerrigan cross-reference. Top quote clears 0.91 &mdash; well above the refusal floor.</div>
+        </div>
+
+        <!-- STEP 3: open PDF side-by-side -->
+        <div class="step" data-step="3">
+          <div class="step__label">PDF VIEWER &middot; side-by-side</div>
+          <div class="confirmed">
+            <div class="confirmed__check">⌖</div>
+            <div>
+              <div class="confirmed__name">nada_data_2025_full_year.pdf &middot; p.&nbsp;6</div>
+              <div class="confirmed__meta">Highlight at bbox <span class="mono">[72, 412, 538, 458]</span> &middot; folder <span class="mono">00_common/</span></div>
+            </div>
+          </div>
+          <div class="step__hint">The Next.js viewer opens the cited page in the right pane and scrolls to the highlighted region. Robert sees the source, not just the answer.</div>
+        </div>
+
+        <!-- STEP 4: cite -->
+        <div class="step" data-step="4">
+          <div class="step__label">VERBATIM QUOTE &middot; <span class="mono">cite-or-refuse</span></div>
+
+          <blockquote class="answer">
+            <div class="answer__quotemark">&ldquo;</div>
+            <p class="answer__quote">
+              Average franchised dealership pre-tax net profit was <em>$5,408,000</em> in 2025,
+              down 6.6% from 2024. Net profit as a percentage of total dealership sales averaged
+              <em>3.2%</em>, with the highest contribution coming from the service and parts department.
+            </p>
+            <div class="answer__sep"></div>
+            <p class="answer__gloss">
+              Use this as the industry baseline. The next two pitch queries show how this dealer's
+              actual gross compares, and how that gap translates into blue-sky multiples.
+            </p>
+            <footer class="answer__cite">
+              <span class="answer__cite-tag">nada · p.&nbsp;6</span>
+              <span class="answer__cite-meta">FRANCHISED DEALERSHIP PROFILE &middot; chunk <span class="mono">nada25-p006-c01</span></span>
+            </footer>
+          </blockquote>
+
+          <div class="step__hint">No LLM gloss in the headline path. The quote is what shipped from Elasticsearch; the model is reserved for the missing-doc flow.</div>
+        </div>
+
+        <!-- STEP 5: refuse -->
+        <div class="step" data-step="5">
+          <div class="step__label step__label--alt">REFUSAL &middot; <span class="mono">"on the Ford monthly statement, which line is warranty receivable?"</span></div>
+
+          <div class="refusal">
+            <div class="refusal__stamp">REFUSED<br/><small>missing source</small></div>
+            <div class="refusal__body">
+              <p>I can&rsquo;t find this in your corpus with high confidence.</p>
+              <p class="refusal__why">Your <span class="mono">Ford/</span> folder contains the 10-K and annual report but not the Ford Dealer Accounting Manual. No quote in the index scored above the retrieval floor for warranty-receivable line numbers.</p>
+              <p class="refusal__cands">To unlock this query, add <span class="mono">Ford/ford_dealer_accounting_manual.pdf</span> &mdash; the missing-doc agent has flagged it as the highest-leverage gap in your library.</p>
+            </div>
+          </div>
+
+          <div class="step__hint">The refusal becomes a sales motion: Margin tells Robert exactly which document would unlock the answer. The three asks at the end of this issue follow directly from this loop.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============== SECTION 4: STACK ============== -->
+<section class="section section--stack" id="stack">
+
+  <div class="section__header">
+    <div class="section__num">IV.</div>
+    <div class="section__title">Colophon &middot; The Stack</div>
+    <div class="section__rule"></div>
+    <div class="section__page">p. 05</div>
+  </div>
+
+  <p class="section__lede">
+    Eight load-bearing dependencies in the live product. Each chosen because the alternative
+    would require either rolling our own or paying a vendor for what is now a commodity.
+  </p>
+
+  <ul class="stack">
+    <li class="stack__row">
+      <span class="stack__num">01</span>
+      <span class="stack__name">Next.js&nbsp;14</span>
+      <span class="stack__role">Frontend &middot; app router</span>
+      <span class="stack__why">SSR + API routes in one process. Auth and PDF viewer co-located with the search UI.</span>
+    </li>
+    <li class="stack__row">
+      <span class="stack__num">02</span>
+      <span class="stack__name">FastAPI</span>
+      <span class="stack__role">Backend service</span>
+      <span class="stack__why">Tiny surface — <span class="mono">/ingest</span>, <span class="mono">/search</span>, <span class="mono">/documents</span>, <span class="mono">/health</span>. Pydantic mirrors the frontend contract.</span>
+    </li>
+    <li class="stack__row">
+      <span class="stack__num">03</span>
+      <span class="stack__name">Elasticsearch</span>
+      <span class="stack__role">Per-user retrieval</span>
+      <span class="stack__why">BM25 (keyword) + dense_vector kNN (natural) in one index per user. Tenant isolation by construction.</span>
+    </li>
+    <li class="stack__row">
+      <span class="stack__num">04</span>
+      <span class="stack__name">sentence-transformers</span>
+      <span class="stack__role">Embeddings + reranker</span>
+      <span class="stack__why">Self-hosted, deterministic. No external embedding bill that scales with corpus.</span>
+    </li>
+    <li class="stack__row">
+      <span class="stack__num">05</span>
+      <span class="stack__name">bcrypt + jose</span>
+      <span class="stack__role">Auth &middot; passwords + JWT cookie</span>
+      <span class="stack__why">HTTP-only, SameSite=Lax. No third-party identity provider for a private prototype.</span>
+    </li>
+    <li class="stack__row">
+      <span class="stack__num">06</span>
+      <span class="stack__name">claude-sonnet-4-6</span>
+      <span class="stack__role">Missing-doc agent (CLI subprocess)</span>
+      <span class="stack__why">Reserved for refusals. Names the document type that would unlock a query the corpus can't answer.</span>
+    </li>
+    <li class="stack__row">
+      <span class="stack__num">07</span>
+      <span class="stack__name">pdfplumber + pdf.js</span>
+      <span class="stack__role">Server parse &middot; client viewer</span>
+      <span class="stack__why">Server extracts pages and bboxes; the browser renders the highlighted region side-by-side.</span>
+    </li>
+    <li class="stack__row">
+      <span class="stack__num">08</span>
+      <span class="stack__name">Vitest + Playwright</span>
+      <span class="stack__role">Tests</span>
+      <span class="stack__why">Vitest for the auth and search-helper units; Playwright for the sign-in → upload → search → cite path.</span>
+    </li>
+  </ul>
+
+</section>
+
+<!-- ============== SECTION 5: THE BUILD LOG ============== -->
+<section class="section section--build" id="build">
+
+  <div class="section__header">
+    <div class="section__num">V.</div>
+    <div class="section__title">The Build Log</div>
+    <div class="section__rule"></div>
+    <div class="section__page">p. 06</div>
+  </div>
+
+  <p class="section__lede">
+    Three weeks. Six phases. Numbered, dated, and partly shipped &mdash; with the open work
+    on the record below the line.
+  </p>
+
+  <ol class="build">
+    <li class="build__row">
+      <div class="build__num">P1</div>
+      <div class="build__name">Plan &middot; Apr 16</div>
+      <div class="build__why">Original weekend plan committed at <span class="mono">bp/2026-04-16-weekend-gm-rag-demo.md</span>. Eleven tasks, single PDF, single user, Streamlit UI.</div>
+      <div class="build__time">Apr&nbsp;16</div>
+    </li>
+    <li class="build__row build__row--big">
+      <div class="build__num">P2</div>
+      <div class="build__name">Weekend backend &middot; Apr 16–21</div>
+      <div class="build__why">Tasks 1–8 of the plan: scaffold, chunking, twenty-line catalog (recalibrated against the actual 616-page PDF), fuzzy match, LanceDB index, strict-citation answer stage, 8-row golden set. <strong>12 passed, 3 skipped</strong>. Streamlit UI never built &mdash; pivot follows.</div>
+      <div class="build__time">~5d</div>
+    </li>
+    <li class="build__row">
+      <div class="build__num">P3</div>
+      <div class="build__name">The pivot &middot; late Apr</div>
+      <div class="build__why">Decision: Streamlit can't show side-by-side PDFs and can't be a multi-tenant product. Stand up <span class="mono">frontend_website/</span> (Next.js 14, app router, bcrypt + JWT auth, per-user FS workspace).</div>
+      <div class="build__time">~3d</div>
+    </li>
+    <li class="build__row build__row--big">
+      <div class="build__num">P4</div>
+      <div class="build__name">Backend service &middot; early May</div>
+      <div class="build__why">Stand up <span class="mono">backend_rag/</span> &mdash; FastAPI service over Elasticsearch with one index per user, BM25 + dense_vector kNN, sentence-transformers embeddings + reranker, Claude-CLI agent for missing-doc refusals. Frontend ↔ backend contract pinned in <span class="mono">lib/rag/contract.ts</span>.</div>
+      <div class="build__time">~5d</div>
+    </li>
+    <li class="build__row">
+      <div class="build__num">P5</div>
+      <div class="build__name">Multi-OEM corpus &middot; May 8</div>
+      <div class="build__why">Seed Robert's demo workspace: Chevrolet, Ford, GMC, plus shared-GM family, sample-statement placeholder, and an <span class="mono">00_common</span> set (NADA, Kerrigan, IRS Pub 538, NIADA, IL/NY warranty, STAR architecture). 30+ PDFs total.</div>
+      <div class="build__time">May&nbsp;8</div>
+    </li>
+    <li class="build__row">
+      <div class="build__num">P6</div>
+      <div class="build__name">Press &middot; today</div>
+      <div class="build__why">Editorial showcase (this page) at <span class="mono">static_website/</span>. Plan status update prepended to the original BP. Pitch script at <span class="mono">demo_questions.md</span> (Group A / B / C).</div>
+      <div class="build__time">May&nbsp;9</div>
+    </li>
+    <li class="build__row build__row--big">
+      <div class="build__num">P7</div>
+      <div class="build__name">Open &middot; next</div>
+      <div class="build__why">(a) Port the catalog disambiguation flow into the new UI once a redacted client statement lands. (b) Enforce the strict refusal marker in <span class="mono">backend_rag/app/search.py</span>. (c) Cold-run rehearsal of the live demo. (d) Cross-product Playwright golden eval over Group A.</div>
+      <div class="build__time">open</div>
+    </li>
+  </ol>
+
+</section>
+
+<!-- ============== SECTION 6: THE THREE ASKS ============== -->
+<section class="section section--asks" id="asks">
+
+  <div class="section__header">
+    <div class="section__num">VI.</div>
+    <div class="section__title">After the Demo &middot; Three Asks</div>
+    <div class="section__rule"></div>
+    <div class="section__page">p. 07</div>
+  </div>
+
+  <div class="asks">
+    <div class="ask">
+      <div class="ask__num">A.</div>
+      <h3 class="ask__name">The Ford accounting manual</h3>
+      <p>Under NDA &mdash; Robert has it. Unlocks the warranty-receivable line and every Ford-specific account.</p>
+    </div>
+    <div class="ask">
+      <div class="ask__num">B.</div>
+      <h3 class="ask__name">One redacted client statement</h3>
+      <p>Real monthly statement from one of his clients. Anchors the Ford catalog against an actual layout and powers cross-doc reasoning vs.&nbsp;NADA averages.</p>
+    </div>
+    <div class="ask">
+      <div class="ask__num">C.</div>
+      <h3 class="ask__name">The firm's monthly close checklist</h3>
+      <p>The killer feature: ask Margin any line on the checklist. Floor-plan accrual, LIFO election, warranty reconciliation &mdash; cited from the manual that defines it.</p>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="footer__rule"></div>
+  <div class="footer__grid">
+    <div class="footer__col">
+      <div class="footer__label">Set in</div>
+      <div class="footer__value">Bodoni Moda &middot; Fraunces &middot; JetBrains Mono</div>
+    </div>
+    <div class="footer__col">
+      <div class="footer__label">Built with</div>
+      <div class="footer__value">Next.js · FastAPI · Elasticsearch · Anthropic</div>
+    </div>
+    <div class="footer__col footer__col--right">
+      <div class="footer__label">Issue</div>
+      <div class="footer__value">Vol. I &middot; № 02 &middot; May 9, 2026</div>
+    </div>
+  </div>
+  <div class="footer__brand">
+    <span>The Dealer Ledger</span>
+    <span class="footer__mark">◐</span>
+    <span>covering Margin &middot; the dealer CFO copilot</span>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
